@@ -1,5 +1,6 @@
 package com.pagoflex.usuarios_service.client;
 
+import com.pagoflex.usuarios_service.dto.RolDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,10 @@ public class RolCliente {
         } catch (WebClientRequestException e) {
             throw servicioNoDisponible();
         }
+    }
+
+    private ResponseStatusException servicioNoDisponible(){
+        return new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "El servicio de roles no está disponible");
     }
 
 }
