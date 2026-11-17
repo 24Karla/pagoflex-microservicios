@@ -17,7 +17,7 @@ public class RolCliente {
 
     private final WebClient webClient;
 
-    public RolCLiente(@Value("${roles.service.url}")String rolesUrl){
+    public RolCliente(@Value("${roles.service.url}")String rolesUrl){
         this.webClient = WebClient.builder().baseUrl(rolesUrl).build();
     }
 
