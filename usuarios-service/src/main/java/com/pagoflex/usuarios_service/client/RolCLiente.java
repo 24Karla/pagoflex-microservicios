@@ -8,16 +8,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
-
 import java.util.List;
 
 @Component
-public class RolCliente {
+public class RolCLiente {
 
     private final WebClient webClient;
 
-    public RolCliente(@Value("${roles.service.url}")String rolesUrl){
+    public RolCLiente(@Value("${roles.service.url}") String rolesUrl){
         this.webClient = WebClient.builder().baseUrl(rolesUrl).build();
     }
 
@@ -29,6 +27,20 @@ public class RolCliente {
                     .bodyToFlux(RolDto.class)
                     .collectList()
                     .block();
+        } catch (WebClientRequestException e) {
+            throw servicioNoDisponible();
+        }
+    }
+
+    public RolDto obtener(Long id) {
+        try {
+            return webClient.get()
+                    .uri("/api/roles/{id}", id)
+                    .retrieve()
+                    .bodyToMono(RolDto.class)
+                    .block();
+        } catch (WebClientResponseException.NotFound e) {
+            return null;
         } catch (WebClientRequestException e) {
             throw servicioNoDisponible();
         }
