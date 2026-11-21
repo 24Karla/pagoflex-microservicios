@@ -19,7 +19,16 @@ Cada servicio tiene su propia base. `usuarios-service` guarda el identificador `
 
 1. Inicia MySQL en `localhost:3306`.
 2. Revisa `DB_USERNAME` y `DB_PASSWORD` en cada servicio si tus credenciales son distintas a `root` sin contraseña.
-3. Ejecuta primero `roles-service`, luego `usuarios-service` y después los demás servicios.
+3. Ejecuta cada servicio en una terminal separada. Inicia primero `roles-service`, luego `usuarios-service` y después los demás.
+
+Ejemplo en PowerShell, desde la raíz del repositorio:
+
+```powershell
+cd roles-service
+.\mvnw.cmd spring-boot:run
+```
+
+En otra terminal, repite con cada carpeta (`usuarios-service`, `auditoria-service`, `compromisos-service`, `empresas-service`, `pagos-service`, `recomendaciones-service` y `reportes-service`).
 
 Los puertos, conexión y URL del servicio de roles se pueden cambiar con las variables `SERVER_PORT`, `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` y `ROLES_SERVICE_URL`.
 
