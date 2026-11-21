@@ -2,10 +2,11 @@ package com.pagoflex.usuarios_service.dto;
 
 public record RegistroRequest(
     String nombre,
-    Long rut,
-    String correo,
+    String rut,
+    String cuenta,
     String ciudad,
-    String contrasena
+    String contrasena,
+    Long rolId
 ) {
 
 }
