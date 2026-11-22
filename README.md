@@ -2,6 +2,8 @@
 
 Este repositorio incluye ocho servicios independientes, siguiendo la organización del ejemplo MiRegistro:
 
+La plataforma también incluye `eureka-server` para descubrimiento de servicios y `api-gateway` como punto de entrada HTTP.
+
 | Servicio | Puerto local | Base de datos | Responsabilidad |
 |---|---:|---|---|
 | `roles-service` | 8081 | `pagoflex_roles` | Catálogo de roles de la aplicación |
@@ -12,6 +14,8 @@ Este repositorio incluye ocho servicios independientes, siguiendo la organizaci�
 | `pagos-service` | 8086 | `pagoflex_pagos` | Pagos registrados y comprobantes |
 | `recomendaciones-service` | 8087 | `pagoflex_recomendaciones` | Recomendaciones de organizaciones |
 | `reportes-service` | 8088 | `pagoflex_reportes` | Incidencias y gestión de reportes |
+| `eureka-server` | 8761 | — | Registro y descubrimiento de servicios |
+| `api-gateway` | 8080 | — | Enrutamiento hacia los microservicios registrados |
 
 Cada servicio tiene su propia base. `usuarios-service` guarda el identificador `rolId` y consulta `roles-service` por HTTP cuando necesita validar o mostrar el rol. No se declara una relación JPA entre bases de servicios distintos.
 
@@ -19,18 +23,27 @@ Cada servicio tiene su propia base. `usuarios-service` guarda el identificador `
 
 1. Inicia MySQL en `localhost:3306`.
 2. Revisa `DB_USERNAME` y `DB_PASSWORD` en cada servicio si tus credenciales son distintas a `root` sin contraseña.
-3. Ejecuta cada servicio en una terminal separada. Inicia primero `roles-service`, luego `usuarios-service` y después los demás.
+3. Inicia `eureka-server` y luego los ocho microservicios. Cada microservicio se registra automáticamente en Eureka. Inicia `api-gateway` después de Eureka; puede iniciarse antes que los servicios.
 
-Ejemplo en PowerShell, desde la raíz del repositorio:
+Inicia Eureka primero, desde la raíz del repositorio:
+
+```powershell
+cd eureka-server
+mvn spring-boot:run
+```
+
+En otra terminal, inicia `roles-service`:
 
 ```powershell
 cd roles-service
 .\mvnw.cmd spring-boot:run
 ```
 
-En otra terminal, repite con cada carpeta (`usuarios-service`, `auditoria-service`, `compromisos-service`, `empresas-service`, `pagos-service`, `recomendaciones-service` y `reportes-service`).
+Inicia los demás servicios en terminales separadas (roles primero para atender las consultas actuales de usuarios) y finalmente `api-gateway`, usando `mvn spring-boot:run` en los proyectos nuevos. El panel de Eureka está disponible en `http://localhost:8761`.
 
-Los puertos, conexión y URL del servicio de roles se pueden cambiar con las variables `SERVER_PORT`, `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` y `ROLES_SERVICE_URL`.
+Los puertos, conexión y URL del servicio de roles se pueden cambiar con las variables `SERVER_PORT`, `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `ROLES_SERVICE_URL` y `EUREKA_URL` (por defecto `http://localhost:8761/eureka/`).
+
+El gateway escucha en `http://localhost:8080` y conserva las rutas `/api/...` de cada servicio. Por ejemplo, `GET http://localhost:8080/api/roles` se enruta a `roles-service`; las rutas de los ocho servicios se balancean usando su nombre registrado en Eureka.
 
 Al iniciar, `roles-service` crea los roles usados por PagoFlex si todavía no existen: `1 Agente`, `2 Ejecutivo` y `3 Usuario Final`.
 
@@ -126,7 +139,7 @@ Ejemplo de registro:
 }
 ```
 
-La app Android debe apuntar a `http://10.0.2.2:8082/` desde el emulador Android. En un teléfono físico, usa la dirección IP local del computador.
+La app Android puede apuntar a `http://10.0.2.2:8080/` desde el emulador Android para usar el gateway. En un teléfono físico, usa la dirección IP local del computador. Las URLs directas de los servicios (8081–8088) siguen disponibles para desarrollo.
 
 ## Para qué sirve cada carpeta
 
