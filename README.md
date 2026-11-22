@@ -60,10 +60,15 @@ Al iniciar, `roles-service` crea los roles usados por PagoFlex si todavía no ex
 
 | Método | Ruta | Resultado |
 |---|---|---|
-| GET | `/api/usuarios` | Lista de usuarios sin contraseñas |
+| GET | `/api/usuarios?buscar=texto` | Lista usuarios; búsqueda opcional por nombre, cuenta o RUT |
 | GET | `/api/usuarios/{id}` | Usuario sin contraseña; 404 si no existe |
 | POST | `/api/usuarios` | Registra un usuario; 201, 400 por datos incompletos, 409 por cuenta o RUT repetido |
 | POST | `/api/usuarios/login` | Inicia sesión; 200 o 401 por credenciales inválidas |
+| PUT | `/api/usuarios/{id}` | Actualiza nombre, cuenta, ciudad, RUT y rol |
+| PUT | `/api/usuarios/{id}/contrasena` | Cambia la contraseña verificando la actual; JSON `{ "actual": "...", "nueva": "..." }` |
+| DELETE | `/api/usuarios/{id}` | Elimina el usuario y su avatar |
+| POST | `/api/usuarios/{id}/avatar` | Sube una imagen multipart en el campo `archivo` (máximo 5 MB) |
+| GET | `/api/usuarios/{id}/avatar` | Devuelve la fotografía JPEG del perfil |
 
 ### Auditoría — `http://localhost:8083`
 
@@ -139,7 +144,7 @@ Ejemplo de registro:
 }
 ```
 
-La app Android puede apuntar a `http://10.0.2.2:8080/` desde el emulador Android para usar el gateway. En un teléfono físico, usa la dirección IP local del computador. Las URLs directas de los servicios (8081–8088) siguen disponibles para desarrollo.
+La app Android puede apuntar a `http://10.0.2.2:8080/` desde el emulador Android para usar el gateway. En un teléfono físico, usa la dirección IP local del computador. Las URLs directas de los servicios (8081–8088) siguen disponibles para desarrollo. Los avatares se almacenan en `uploads/avatars` por defecto; se puede cambiar con `AVATAR_STORAGE_DIR`.
 
 ## Para qué sirve cada carpeta
 
