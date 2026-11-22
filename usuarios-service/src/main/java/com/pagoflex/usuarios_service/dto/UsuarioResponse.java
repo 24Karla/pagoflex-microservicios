@@ -7,7 +7,8 @@ public record UsuarioResponse(
         String cuenta,
         String ciudad,
         Long rolId,
-        String rolNombre
+        String rolNombre,
+        String avatarUrl
 ) {
 
 }
